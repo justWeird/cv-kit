@@ -23,8 +23,10 @@ you an honest gap list to prepare from. The gap list is the product as much as t
 
 ```bash
 # 1. Prerequisites
-brew install pandoc weasyprint poppler        # macOS
-# sudo apt install pandoc weasyprint poppler-utils   # Debian/Ubuntu
+brew install pandoc weasyprint poppler                # macOS
+# sudo apt install pandoc weasyprint poppler-utils    # Debian/Ubuntu
+# Windows: run `wsl --install -d Ubuntu`, then use the Debian line inside it.
+#          See SETUP.md for why WSL rather than native Windows.
 
 # 2. Clone
 git clone https://github.com/justWeird/cv-kit.git
@@ -141,6 +143,11 @@ bullets read as clunky, and a CV is not the place for narrative voice.
 - weasyprint
 - A page counter: poppler's `pdfinfo`, or `pip install pypdf`. `bin/cv-pagecount` also falls back
   to parsing the PDF directly with Python's standard library, so this is usually already covered.
+
+Supported on macOS and Linux. Windows works through WSL, which is what
+[SETUP.md](SETUP.md#windows) walks through. Native Windows is possible but needs manual work in
+three places: weasyprint's Pango dependency, the two bash helper scripts, and a git symlink that
+Windows drops by default. All three are documented.
 
 ## Tests
 

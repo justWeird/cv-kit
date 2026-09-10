@@ -27,8 +27,60 @@ sudo dnf install pandoc weasyprint poppler-utils
 
 ### Windows
 
-Use WSL, then follow the Debian instructions inside it. weasyprint's native Windows install
-needs GTK libraries and is not worth the time.
+**Use WSL.** Install it, then follow the Debian instructions inside it:
+
+```powershell
+wsl --install -d Ubuntu
+```
+
+Then, inside the Ubuntu shell:
+
+```bash
+sudo apt update
+sudo apt install pandoc weasyprint poppler-utils
+```
+
+Clone the repo inside the WSL filesystem (`~/cv-kit`), not on the Windows drive under
+`/mnt/c/`. Symlinks and file permissions behave correctly there, and the toolkit needs both.
+
+#### Why WSL rather than native Windows
+
+Three separate things break on native Windows, and WSL fixes all three at once.
+
+1. **weasyprint needs Pango.** `pip install weasyprint` alone fails. The
+   [official instructions](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html)
+   require installing MSYS2 first, then `pacman -S mingw-w64-ucrt-x86_64-pango`, then pip
+   inside a virtual environment.
+2. **`bin/cv-pagecount` and `bin/cv-profile` are bash scripts.** They do not run in PowerShell
+   or cmd.
+3. **`.claude/skills` is a symlink.** Git for Windows sets `core.symlinks=false` by default
+   unless Developer Mode is enabled, so cloning writes a text file containing `../skills`
+   instead of a link. Claude Code then finds no skills, with no error to tell you why.
+
+#### If you must run native Windows
+
+It works, with manual steps. Install pandoc with `winget install JohnMacFarlane.Pandoc`, install
+weasyprint through MSYS2 as linked above, and get a page counter with `pip install pypdf`.
+
+Then handle the two cv-kit-specific problems:
+
+- **Run the bash scripts through Git Bash**, which ships with Git for Windows. The skills call
+  `bin/cv-pagecount` and `bin/cv-profile` as commands, so either run Claude Code from a Git Bash
+  shell, or count pages yourself with `python -c "from pypdf import PdfReader; print(len(PdfReader('CV.pdf').pages))"`.
+- **Fix the symlink.** Either clone with symlinks enabled:
+
+  ```powershell
+  git clone -c core.symlinks=true https://github.com/justWeird/cv-kit.git
+  ```
+
+  Or skip the symlink entirely and install cv-kit as a plugin instead of a workspace, which
+  reads `skills/` directly and never touches `.claude/skills`.
+
+Verify the symlink survived:
+
+```bash
+ls -l .claude/skills     # must point to ../skills, not be a 9-byte file
+```
 
 ### Verify
 
