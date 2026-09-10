@@ -1,0 +1,62 @@
+/* CV stylesheet for pandoc + weasyprint conversion.
+   Tuned so a ~600-word CV.md lands on 2 pages. */
+
+@page {
+  size: A4;
+  margin: 1.6cm 1.8cm;
+}
+
+/* pandoc injects a title header; the CV's own h1 is the real name line */
+#title-block-header {
+  display: none;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.35;
+  color: #111;
+}
+
+h1 {
+  font-size: 17pt;
+  margin: 0 0 2pt 0;
+}
+
+/* contact line sits right under the name */
+h1 + p {
+  font-size: 9pt;
+  color: #333;
+  margin: 0 0 10pt 0;
+}
+
+h2 {
+  font-size: 11.5pt;
+  text-transform: uppercase;
+  letter-spacing: 0.4pt;
+  border-bottom: 1pt solid #999;
+  padding-bottom: 2pt;
+  margin: 7pt 0 4pt 0;
+}
+
+p {
+  margin: 2.5pt 0;
+}
+
+ul {
+  margin: 1.5pt 0 5pt 0;
+  padding-left: 14pt;
+}
+
+li {
+  margin: 1pt 0;
+}
+
+a {
+  color: #111;
+  text-decoration: none;
+}
+
+strong {
+  font-weight: 600;
+}

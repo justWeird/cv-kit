@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Print the resolved profile directory, or fail with an actionable message.
+#
+# Resolution order (first hit wins):
+#   1. $CV_PROFILE
+#   2. ./profile/ in the current working directory
+#   3. ~/.config/cv-kit/profile/
+#
+# Usage:
+#   cv-profile            print the profile directory
+#   cv-profile --check    same, but also verify profile.yml exists
+set -euo pipefail
+
+check_dir() {
+  [ -n "${1:-}" ] && [ -d "$1" ]
+}
+
+resolved=""
+if check_dir "${CV_PROFILE:-}"; then
+  resolved="$CV_PROFILE"
+elif check_dir "$PWD/profile"; then
+  resolved="$PWD/profile"
+elif check_dir "$HOME/.config/cv-kit/profile"; then
+  resolved="$HOME/.config/cv-kit/profile"
+fi
+
+if [ -z "$resolved" ]; then
+  cat >&2 <<'MSG'
+cv-kit: no profile found.
+
+Looked in, in order:
+  1. $CV_PROFILE          (not set, or not a directory)
+  2. ./profile/           (not present in the current directory)
+  3. ~/.config/cv-kit/profile/   (not present)
+
+Run /cv-setup to create one. Do not proceed without it.
+MSG
+  exit 1
+fi
+
+if [ "${1:-}" = "--check" ] && [ ! -f "$resolved/profile.yml" ]; then
+  echo "cv-kit: found $resolved but it has no profile.yml. Run /cv-setup." >&2
+  exit 1
+fi
+
+printf '%s\n' "$resolved"

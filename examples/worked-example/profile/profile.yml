@@ -1,0 +1,17 @@
+# Fictional profile for the cv-kit worked example. Jane Doe does not exist.
+name: Jane Doe
+email: jane@example.com
+location: Amsterdam, Netherlands
+phone: "+31 6 12345678"
+
+links:
+  github: github.com/janedoe
+  linkedin: linkedin.com/in/janedoe
+
+master_cv: profile/master-cv.md
+voice: profile/voice.md
+appendix: profile/appendix.md
+
+work_authorization: "Dutch citizen, no sponsorship needed"
+sign_off: "Best regards,"
+applications_dir: output

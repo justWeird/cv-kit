@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# Print the page count of a PDF. Works on macOS and Linux, with no
+# third-party Python packages required.
+#
+# Exits non-zero if no counter works, so a caller can never silently
+# skip the check.
+#
+# Usage: cv-pagecount FILE.pdf
+set -uo pipefail
+
+pdf="${1:?usage: cv-pagecount FILE.pdf}"
+[ -f "$pdf" ] || { echo "cv-pagecount: no such file: $pdf" >&2; exit 1; }
+
+# 1. pdfinfo (poppler). Fastest and most accurate when present.
+if command -v pdfinfo >/dev/null 2>&1; then
+  n=$(pdfinfo "$pdf" 2>/dev/null | awk '/^Pages:/ {print $2}')
+  [ -n "${n:-}" ] && { printf '%s\n' "$n"; exit 0; }
+fi
+
+# 2. Python. Uses pypdf when it is importable, otherwise parses the file
+#    directly with zlib, which is in the standard library.
+#
+#    The direct parser matters: weasyprint, the engine this toolkit uses,
+#    writes page objects into a FlateDecode-compressed object stream. The
+#    string "/Type /Page" never appears as plaintext in its output, so any
+#    grep-based count returns zero on every PDF cv-kit produces.
+if command -v python3 >/dev/null 2>&1; then
+  n=$(python3 - "$pdf" 2>/dev/null <<'PY'
+import re, sys, zlib
+
+data = open(sys.argv[1], "rb").read()
+
+try:
+    from pypdf import PdfReader
+    print(len(PdfReader(sys.argv[1]).pages)); raise SystemExit
+except ImportError:
+    pass
+except Exception:
+    pass
+
+# Decompress every FlateDecode stream and search the plaintext alongside it.
+blobs = [data]
+for m in re.finditer(rb"stream\r?\n", data):
+    start = m.end()
+    end = data.find(b"endstream", start)
+    if end == -1:
+        continue
+    try:
+        blobs.append(zlib.decompress(data[start:end]))
+    except zlib.error:
+        continue
+
+joined = b"".join(blobs)
+
+# A page object is /Type /Page not followed by another letter, which is
+# what separates it from /Type /Pages, the tree node.
+pages = len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", joined))
+if pages:
+    print(pages); raise SystemExit
+
+# Fall back to the page tree's own /Count. The root node carries the total,
+# so the largest value across all tree nodes is the page count.
+counts = [int(c) for c in re.findall(rb"/Type\s*/Pages[^>]*?/Count\s+(\d+)", joined)]
+counts += [int(c) for c in re.findall(rb"/Count\s+(\d+)[^>]*?/Type\s*/Pages", joined)]
+if counts:
+    print(max(counts)); raise SystemExit
+
+raise SystemExit(1)
+PY
+)
+  [ -n "${n:-}" ] && { printf '%s\n' "$n"; exit 0; }
+fi
+
+# 3. mdls (macOS Spotlight). Last, not first: it reads the Spotlight index,
+#    so it returns (null) for a file written seconds ago, which is exactly
+#    the file a conversion step needs to check.
+if command -v mdls >/dev/null 2>&1; then
+  n=$(mdls -raw -name kMDItemNumberOfPages "$pdf" 2>/dev/null || true)
+  case "$n" in
+    ''|'(null)') : ;;
+    *) printf '%s\n' "$n"; exit 0 ;;
+  esac
+fi
+
+cat >&2 <<'MSG'
+cv-pagecount: could not count pages.
+
+Install one of these, then rerun:
+  macOS:  brew install poppler        (gives pdfinfo)
+  Debian: sudo apt install poppler-utils
+  Any:    pip install pypdf
+
+Do not skip the page-count check. A 3-page CV fails silently otherwise.
+MSG
+exit 1

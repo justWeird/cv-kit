@@ -1,0 +1,117 @@
+/* Proposal stylesheet for pandoc + weasyprint conversion.
+   Multi-page client-facing document: needs table rules and page numbers,
+   which cv-style.css and letter-style.css do not carry. */
+
+@page {
+  size: A4;
+  margin: 2cm 2.2cm 1.8cm 2.2cm;
+
+  @bottom-center {
+    content: counter(page) " / " counter(pages);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 8pt;
+    color: #777;
+  }
+}
+
+/* pandoc injects a title block; the document's own h1 is the real title */
+#title-block-header {
+  display: none;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  color: #111;
+}
+
+h1 {
+  font-size: 20pt;
+  margin: 0 0 4pt 0;
+  letter-spacing: -0.2pt;
+}
+
+/* the Prepared for / Prepared by / Date block sits under the title */
+h1 + p {
+  font-size: 9.5pt;
+  color: #333;
+  line-height: 1.6;
+  margin: 0 0 4pt 0;
+}
+
+h2 {
+  font-size: 12.5pt;
+  border-bottom: 1pt solid #999;
+  padding-bottom: 3pt;
+  margin: 20pt 0 8pt 0;
+  break-after: avoid;
+}
+
+h3 {
+  font-size: 11pt;
+  margin: 14pt 0 5pt 0;
+  break-after: avoid;
+}
+
+p {
+  margin: 0 0 8pt 0;
+  orphans: 2;
+  widows: 2;
+}
+
+ul {
+  margin: 0 0 10pt 0;
+  padding-left: 15pt;
+}
+
+li {
+  margin: 0 0 4pt 0;
+}
+
+strong {
+  font-weight: 600;
+}
+
+a {
+  color: #111;
+  text-decoration: none;
+}
+
+em {
+  font-style: italic;
+}
+
+/* section separators are redundant against the h2 rule */
+hr {
+  display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 4pt 0 12pt 0;
+  break-inside: avoid;
+}
+
+th {
+  background: #f2f2f2;
+  text-align: left;
+  font-weight: 600;
+  padding: 5pt 7pt;
+  border: 0.5pt solid #bbb;
+}
+
+td {
+  padding: 5pt 7pt;
+  border: 0.5pt solid #ccc;
+  vertical-align: top;
+}
+
+/* column alignment comes from the markdown table separator row,
+   so pandoc's inline text-align must win over the th default */
+th[style*="text-align: right"],
+td[style*="text-align: right"] {
+  text-align: right;
+}

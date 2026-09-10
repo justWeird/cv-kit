@@ -1,0 +1,29 @@
+# Personal data. Never commit these.
+#
+# Both patterns are unanchored on purpose: a "profile" or "applications"
+# directory is private no matter how deep it sits, because a user may run
+# cv-kit from a nested working directory.
+profile/
+applications/
+
+# The worked example is the one exception. Its profile is fictional and the
+# README links to it. Git will not descend into an excluded directory, so the
+# directory has to be re-included before its contents can be.
+!examples/**/profile/
+!examples/**/profile/**
+
+# Generated documents, except the worked example's.
+*.pdf
+!examples/**/*.pdf
+
+# Local-only instructions
+CLAUDE.local.md
+.claude/settings.local.json
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Throwaway venvs used by the page-count fallback
+.venv/
+venv/

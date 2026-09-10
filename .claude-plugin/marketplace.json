@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cv-kit",
+  "description": "Job application and client proposal tooling for Claude Code",
+  "owner": {
+    "name": "Joseph Fadiji"
+  },
+  "plugins": [
+    {
+      "name": "cv-kit",
+      "description": "Turn a job posting into a tailored CV, cover letter, and interview prep, or a client brief into a costed proposal. Grounded strictly in a master CV you supply.",
+      "category": "productivity",
+      "source": "./"
+    }
+  ]
+}

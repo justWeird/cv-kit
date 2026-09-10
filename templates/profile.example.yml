@@ -1,0 +1,52 @@
+# cv-kit profile
+#
+# /cv-setup writes this file for you. Edit it by hand any time after that.
+# Every skill reads identity from here. Nothing is hardcoded in the skills.
+#
+# Required:  name, email, location, master_cv, voice, appendix
+# Optional:  phone, links.*, work_authorization, sign_off, applications_dir
+#
+# A skill that needs a missing required field stops and asks you.
+# It never substitutes a placeholder and never invents a value.
+
+name: Jane Doe
+email: jane@example.com
+location: Amsterdam, Netherlands
+
+# Optional. Omit the key entirely to keep the number off your CV.
+phone: "+31 6 12345678"
+
+links:
+  github: github.com/janedoe
+  linkedin: linkedin.com/in/janedoe
+  # Optional. Add or remove keys freely; every one present is written to the
+  # CV contact block as visible text, in the order listed here.
+  portfolio: janedoe.dev
+
+# Path to your master CV. PDF, Markdown, and DOCX all work.
+# Relative paths resolve from the profile directory's parent.
+# This file is the single source of truth for every fact in every output.
+master_cv: profile/Master_CV.pdf
+
+# Your writing voice. /jd reads this in full before writing a cover letter.
+# /proposal reads it too. The CV does not use the persona, only the hard
+# constraints. See the file itself for that split.
+voice: profile/voice.md
+
+# Grounding context for every company and project you have worked with.
+# A Context line on your CV comes from here, from your master CV, or from you.
+# Never from a guess at what a company name implies.
+appendix: profile/appendix.md
+
+# Optional. Free text. Cover letters use it when the posting raises the topic.
+# Examples: "EU citizen", "Dutch orientation-year permit, no sponsorship needed",
+# "US work authorization, no visa required".
+work_authorization: "EU citizen"
+
+# Optional. Defaults to "Best regards," when absent.
+sign_off: "Best regards,"
+
+# Optional. Where /jd and /proposal write their output folders.
+# Resolution order: $CV_APPLICATIONS, then this field, then ./applications/,
+# then the current directory.
+applications_dir: applications

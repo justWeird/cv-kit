@@ -1,0 +1,12 @@
+{
+  "name": "cv-kit",
+  "description": "Turn a job posting into a tailored CV, cover letter, and interview prep, or a client brief into a costed proposal. Grounded strictly in a master CV you supply. Never invents a fact about you.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Joseph Fadiji"
+  },
+  "homepage": "https://github.com/justWeird/cv-kit",
+  "repository": "https://github.com/justWeird/cv-kit",
+  "license": "MIT",
+  "keywords": ["cv", "resume", "cover-letter", "proposal", "job-search", "ats", "pandoc"]
+}
