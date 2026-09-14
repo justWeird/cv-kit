@@ -69,7 +69,7 @@ These happened in real use, not hypothetically. Watch for them specifically:
 | Clunky, clause-stacked CV bullets | A bullet chains two or three actions with semicolons and "and" (e.g. "Diagnosed X...; cut Y and added Z...") because the master CV's own bullet does that | Split into separate bullets or cut the weaker action. See the STE rules under Step 3; the CV is not written in the cover letter's narrative voice. |
 | No context for what a role or project is | A reader cannot tell what a company or project actually does, only what was done there, because the bullets jump straight to actions | Add a context line (Experience) or header parenthetical (Projects) whenever the name alone does not convey what it is. See Context lines under Step 3. |
 | Sign-off collapses onto one line | "Best regards,\" gets its own line in the rendered PDF, but the name, email, and link lines below it run together into one paragraph | Every line of the sign-off needs its own trailing backslash, not just the closing line. See the formatting note under Step 4's Convert to PDF. |
-| ATS checker flags "name not detected" or curly quotes | The PDF text layer is fine, but its `/Title` metadata reads "CV" and pandoc has converted straight quotes to curly ones (found by an online checker, 2026-09-14) | Always pass `-f markdown-smart` and `--metadata title="<Full Name>"` to pandoc. See Convert to PDF under Steps 3 and 4. |
+| ATS checker flags "name not detected" or curly quotes | The PDF text layer is fine, but the name sits in the top 10% of page 1 (a zone ATS parsers discard as a page header), or its `/Title` metadata reads "CV", or pandoc has converted straight quotes to curly ones (found by an online checker, 2026-09-14) | Keep the `@page :first` top margin in `styles/cv.css` and keep the name as a large h1 (a body-size name also fails). Always pass `-f markdown-smart` and `--metadata title="<Full Name>"` to pandoc. See Convert to PDF under Steps 3 and 4. |
 | Skipping the page-count check because `mdls` returned `(null)` | Assuming 2 pages without verifying | Use `bin/cv-pagecount`. It tries pdfinfo, mdls, pypdf, and a raw object count in that order, and fails loudly rather than returning nothing. |
 
 ## Output
@@ -273,7 +273,10 @@ extension, which otherwise converts every straight quote in the markdown into a 
 PDF text layer; some keyword matchers treat `master's` and `master’s` as different strings.
 `--metadata title="<Full Name>"` sets the PDF's `/Title` field to the candidate's name (the exact name from `Master_CV.pdf`); some parsers read
 that field first as the candidate name, and a title of "CV" fails their name check. The CSS
-hides pandoc's injected title block, so the name still renders once on the page.
+hides pandoc's injected title block, so the name still renders once on the page. A third ATS
+trap lives in `styles/cv.css`, not the command: page 1 carries a 3.2cm top margin so the name
+clears the top zone that parsers discard as a page header. Do not shrink it, and do not shrink
+the h1 to body size; both were tested against a checker on 2026-09-14 and both fail.
 
 Then verify the page count and fail loudly if it exceeds 2:
 

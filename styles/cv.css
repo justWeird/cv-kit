@@ -6,6 +6,14 @@
   margin: 1.6cm 1.8cm;
 }
 
+/* ATS parsers discard a top zone of page 1 as a page header. With the default margin the name
+   sat 6% down the page and an online checker reported "name not detected"; at 3.2cm it starts
+   about 12% down and passes. Keep the h1 large: the same checker also failed a body-size name.
+   Tested 2026-09-14. */
+@page :first {
+  margin-top: 3.2cm;
+}
+
 /* pandoc injects a title header; the CV's own h1 is the real name line */
 #title-block-header {
   display: none;
